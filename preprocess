@@ -1,0 +1,23 @@
+#!/bin/bash
+
+#$6 絶対時間
+#$6 絶対時間
+#$5 チーム
+#$7 選手
+#$8 アクションID
+#$9 ボールx
+#$10 ボールy
+#$11 成功or失敗
+
+awk -F"," -v OFS=, '($8=="8" || $8=="9"){print $6}' 20151015_JPN-AUS.csv >> temp_time.csv
+
+
+awk -F"," -v OFS=, '($8=="0" || $8=="1" || $8=="2" || $8=="3" || $8=="5" || $8=="11" || $8=="12" || $8=="7"){print $6,$6,$5,$7,$8,$9,$10,$17}' 20151015_JPN-AUS.csv >> temp_meta.csv
+#awk -F"," -v OFS=, '($8=="0" || $8=="1" || $8=="3" || $8=="5" || $8=="11" || $8=="12" || $8=="7"){print $6,$6,$5,$7,$8,$9,$10,$17}' 20151015_JPN-AUS.csv >> temp_meta.csv
+#awk -F"," -v OFS=, '($4!=NULL){print}' temp_meta.csv >> temp_meta_2.csv
+
+cat temp_time.csv temp_meta.csv > processed_metadata.csv
+
+rm temp*
+
+
