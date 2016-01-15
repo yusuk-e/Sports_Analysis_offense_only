@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import resource
 import codecs
 import random
+import csv
 from collections import defaultdict
 from collections import namedtuple
 from sklearn.cluster import KMeans
@@ -1242,6 +1243,20 @@ def Cluster_analysis():
     labels_Team1 = np.loadtxt('Seq_Team1/labels_Team1.csv', delimiter=',')
     labels_Team2 = np.loadtxt('Seq_Team2/labels_Team2.csv', delimiter=',')
 
+    f1 = open('Seq_Team1/Out_Team1.csv', 'w')
+    csvWriter_Team1 = csv.writer(f1)
+    f1_first = open('Seq_Team1/Out_Team1_first_half.csv', 'w')
+    csvWriter_Team1_first = csv.writer(f1_first)
+    f1_last = open('Seq_Team1/Out_Team1_last_half.csv', 'w')
+    csvWriter_Team1_last = csv.writer(f1_last)
+
+    f2 = open('Seq_Team2/Out_Team2.csv', 'w')
+    csvWriter_Team2 = csv.writer(f2)
+    f2_first = open('Seq_Team2/Out_Team2_first_half.csv', 'w')
+    csvWriter_Team2_first = csv.writer(f2_first)
+    f2_last = open('Seq_Team2/Out_Team2_last_half.csv', 'w')
+    csvWriter_Team2_last = csv.writer(f2_last)
+
     for k in range(K):
         index = np.where(labels_Team1 == k)[0]
 
@@ -1308,7 +1323,36 @@ def Cluster_analysis():
             plt.axis([0, 600, 0, 330])
             plt.savefig('Seq_Team1/Seq_C' + str(k) + '/Seq_Team1_of'+'_no'+str(n)+'_t'+str(timing)+'C' + str(k) + '.png')
             plt.close()
+            
+        #--可視化ツール用データ出力--
+        for i in range(len(index)):
+            flag = 0
+            n = index[i]
+            S = Seq_Team1_of[n]
+            #start_time = S[0,0]
+            start_time = S[0,0] - 1.0
+            if start_time < period3_start:
+                flag = 1#前半ならflag=1
 
+            Hour = int(start_time / 3600)
+            Minute = int((start_time - Hour * 3600) / 60)
+            Second = int((start_time - Hour * 3600 - Minute * 60))
+            Epsilon = int((start_time - Hour * 3600 - Minute * 60 - Second) * 10 ** 3)
+            start_time = str(Hour) + ':' + str(Minute) + ':' + str(Second) + '.' + str(Epsilon)
+            end_time_posi = np.shape(S)[0] - 1
+            #end_time = S[end_time_posi,0]
+            end_time = S[end_time_posi,0] + 1.0
+            Hour = int(end_time / 3600)
+            Minute = int((end_time - Hour * 3600) / 60)
+            Second = int((end_time - Hour * 3600 - Minute * 60))
+            Epsilon = int((end_time - Hour * 3600 - Minute * 60 - Second) * 10 ** 3)
+            end_time = str(Hour) + ':' + str(Minute) + ':' + str(Second) + '.' + str(Epsilon)
+            line = [str(k+1),str(start_time),str(end_time)]
+            csvWriter_Team1.writerow(line)
+            if flag == 1:
+                csvWriter_Team1_first.writerow(line)
+            if flag == 0:
+                csvWriter_Team1_last.writerow(line)
 
         #--位置情報の可視化--
         index = np.where(labels_Team2 == k)[0]
@@ -1375,9 +1419,43 @@ def Cluster_analysis():
             plt.savefig('Seq_Team2/Seq_C' + str(k) + '/Seq_Team2_of'+'_no'+str(n)+'_t'+str(timing)+'C' + str(k) + '.png')
             plt.close()
 
-    #pdb.set_trace()
+        #--可視化ツール用データ出力--
+        for i in range(len(index)):
+            flag = 0
+            n = index[i]
+            S = Seq_Team2_of[n]
+            #start_time = S[0,0]
+            start_time = S[0,0] - 1.0
+            if start_time < period3_start:
+                flag = 1#前半ならflag=1
 
+            Hour = int(start_time / 3600)
+            Minute = int((start_time - Hour * 3600) / 60)
+            Second = int((start_time - Hour * 3600 - Minute * 60))
+            Epsilon = int((start_time - Hour * 3600 - Minute * 60 - Second) * 10 ** 3)
+            start_time = str(Hour) + ':' + str(Minute) + ':' + str(Second) + '.' + str(Epsilon)
+            end_time_posi = np.shape(S)[0] - 1
+            #end_time = S[end_time_posi,0]
+            end_time = S[end_time_posi,0] + 1.0
+            Hour = int(end_time / 3600)
+            Minute = int((end_time - Hour * 3600) / 60)
+            Second = int((end_time - Hour * 3600 - Minute * 60))
+            Epsilon = int((end_time - Hour * 3600 - Minute * 60 - Second) * 10 ** 3)
+            end_time = str(Hour) + ':' + str(Minute) + ':' + str(Second) + '.' + str(Epsilon)
+            line = [str(k+1),str(start_time),str(end_time)]
+            csvWriter_Team2.writerow(line)
+            if flag == 1:
+                csvWriter_Team2_first.writerow(line)
+            if flag == 0:
+                csvWriter_Team2_last.writerow(line)
 
+    f1.close()
+    f1_first.close()
+    f1_last.close()
+
+    f2.close()
+    f2_first.close()
+    f2_last.close()    
 
 #--main--
 input()
